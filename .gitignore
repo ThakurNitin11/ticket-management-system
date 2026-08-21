@@ -51,3 +51,4 @@ scratch_*.ts
 .windsurf/
 curl_home.html
 curl_output.html
+.env
