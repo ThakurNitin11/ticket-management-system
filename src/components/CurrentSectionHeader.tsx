@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Ticket, Compass, Users, BookOpen, UserCircle, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, Ticket, Compass, Users, BookOpen, UserCircle } from 'lucide-react';
 
 export default function CurrentSectionHeader() {
   const pathname = usePathname();
@@ -48,7 +48,7 @@ export default function CurrentSectionHeader() {
             {title}
           </span>
           {isAI && (
-            <span className="px-1.5 py-0.2 text-[9px] font-black uppercase bg-indigo-600 text-white rounded">
+            <span className="px-1.5 py-0.5 text-[9px] font-black uppercase bg-indigo-600 text-white rounded">
               AI
             </span>
           )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Bell, Check, ExternalLink, Trash2, CheckCheck } from 'lucide-react';
 import Link from 'next/link';
 
@@ -19,9 +19,9 @@ export default function NotificationBell() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
-      const res = await fetch('/api/notifications');
+      const res = await fetch('/api/notifications', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setNotifications(data.notifications || []);
@@ -29,14 +29,13 @@ export default function NotificationBell() {
     } catch (error) {
       console.error('Failed to fetch notifications', error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchNotifications();
-    // Poll every 5 seconds for new notifications for a real-time feel
     const interval = setInterval(fetchNotifications, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchNotifications]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

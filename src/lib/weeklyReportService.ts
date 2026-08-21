@@ -71,9 +71,19 @@ export async function generateAndSendWeeklyReport() {
     );
 
     // Fallback recipient if none configured
-    if (recipientEmails.length === 0) {
-      recipientEmails.push('kumbharganesh929@gmail.com');
-    }
+    // Fallback recipient from environment
+if (recipientEmails.length === 0) {
+  const fallbackEmail = process.env.REPORT_EMAIL?.trim();
+
+  if (fallbackEmail) {
+    recipientEmails.push(fallbackEmail);
+  } else {
+    throw new Error(
+      'No active admin notification email found and REPORT_EMAIL is not configured'
+    );
+  }
+}
+
 
     // 3. Compute Weekly Performance Metrics
     const totalCreatedThisWeek = weeklyTickets.length;

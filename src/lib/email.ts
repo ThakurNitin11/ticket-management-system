@@ -1,14 +1,11 @@
 import nodemailer from 'nodemailer';
 
 export function getMailTransporter() {
-  let user = 'kumbharganesh929@gmail.com';
-  let pass = 'axusmowxmwvhtozq';
+  const user = process.env.SMTP_USER?.replace(/["'\s]/g, '').trim();
+  const pass = process.env.SMTP_PASS?.replace(/["'\s]/g, '').trim();
 
-  if (process.env.SMTP_USER && !process.env.SMTP_USER.includes('trialuser') && !process.env.SMTP_USER.includes('815')) {
-    user = process.env.SMTP_USER;
-    if (process.env.SMTP_PASS) {
-      pass = process.env.SMTP_PASS;
-    }
+  if (!user || !pass) {
+    throw new Error('SMTP_USER and SMTP_PASS are required in .env');
   }
 
   return nodemailer.createTransport({
@@ -16,8 +13,8 @@ export function getMailTransporter() {
     port: parseInt(process.env.SMTP_PORT || '465', 10),
     secure: true,
     auth: {
-      user: user.replace(/["'\s]/g, '').trim(),
-      pass: pass.replace(/["'\s]/g, '').trim(),
+      user,
+      pass,
     },
   });
 }
@@ -39,29 +36,26 @@ interface SendEmailOptions {
 }
 
 export async function sendEmail(options: SendEmailOptions) {
-  let user = 'kumbharganesh929@gmail.com';
-  let pass = 'axusmowxmwvhtozq';
+  const user = process.env.SMTP_USER?.replace(/["'\s]/g, '').trim();
 
-  if (process.env.SMTP_USER && !process.env.SMTP_USER.includes('trialuser') && !process.env.SMTP_USER.includes('815')) {
-    user = process.env.SMTP_USER;
-    if (process.env.SMTP_PASS) {
-      pass = process.env.SMTP_PASS;
-    }
+  if (!user) {
+    throw new Error('SMTP_USER is required in .env');
   }
 
-  const cleanUser = user.replace(/["'\s]/g, '').trim();
   const transporter = getMailTransporter();
 
   const headers: Record<string, string | string[]> = {};
+
   if (options.replyToMessageId) {
     headers['In-Reply-To'] = options.replyToMessageId;
   }
+
   if (options.references && options.references.length > 0) {
     headers['References'] = options.references;
   }
 
   const info = await transporter.sendMail({
-    from: `"HelpDesk Support" <${cleanUser}>`,
+    from: `"HelpDesk Support" <${user}>`,
     to: options.to,
     cc: options.cc,
     bcc: options.bcc,

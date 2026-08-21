@@ -2,10 +2,10 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { User, LogOut, Settings } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export default function UserProfileDropdown({ email, isAdmin }: { email: string, isAdmin: boolean }) {
+export default function UserProfileDropdown({ email, isAdmin }: { email: string; isAdmin: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -15,15 +15,22 @@ export default function UserProfileDropdown({ email, isAdmin }: { email: string,
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
-    }
+    };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/login');
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      router.push('/login');
+      router.refresh();
+    } catch (err) {
+      console.error('Logout failed:', err);
+    }
   };
+
+  const initial = email ? email[0].toUpperCase() : 'U';
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -32,7 +39,7 @@ export default function UserProfileDropdown({ email, isAdmin }: { email: string,
         className="flex items-center space-x-2 px-3 py-1.5 bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:bg-white/70 dark:hover:bg-slate-800 backdrop-blur-md rounded-full text-sm font-semibold transition-colors text-slate-700 dark:text-slate-300 shadow-sm"
       >
         <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold text-white shadow-sm">
-          {email[0].toUpperCase()}
+          {initial}
         </div>
         <span className="pr-2 hidden sm:inline-block">{isAdmin ? 'Admin' : 'Agent'}</span>
       </button>

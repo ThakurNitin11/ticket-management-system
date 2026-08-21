@@ -65,8 +65,8 @@ export default function Sidebar({ isAdmin }: { isAdmin: boolean }) {
               <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none">
                 HelpDesk
               </h1>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                Support OS
+              <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">
+                By Nitin Singh
               </span>
             </div>
           </div>
